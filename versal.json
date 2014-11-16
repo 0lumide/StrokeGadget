@@ -1,0 +1,10 @@
+{
+  "launcher": "iframe",
+  "name": "StrokeGadget",
+  "version": "0.0.1",
+  "title": "Stroke Learning",
+  "description": "A gadget to help teach and learn how to write mainly chinese characters",
+  "author": "Olumide",
+  "defaultConfig": {},
+  "defaultUserState": {}
+}
