@@ -333,6 +333,7 @@ player.on('learnerStateChanged', function(data){
 
 player.on('editableChanged', function(editable){
 	//greeting.readOnly = !editable.editable;
+	alert("surprise!");
 	//learnerName.readOnly = editable.editable;
 });
 
