@@ -78,6 +78,9 @@ height: auto;
 .secondView{
 top:-130px !important;
 }
+.homeView{
+	top:250px !important;
+}
 #cancelInput, #select{
 	position:relative;
 	top:30px;
@@ -134,6 +137,15 @@ object{
 	padding:0;
 	margin:10px;
 }
+#canvas-div{
+	position:relative;
+	display:inline-block;
+	width:300px;
+	height:calc(100% - 50px);
+}
+#canvas-div canvas{
+	position:absolute
+}
 #slider{
 	height:5px;
 	margin:5px;
@@ -143,11 +155,44 @@ object{
 	height:16px;
 	top:-8px;
 }
+.nav{
+	height:calc(100% - 50px);
+	width:20px;
+	display:inline-block;
+	background:pink;
+}
+#home{
+	height:250px;
+	width:100%;
+	position:absolute;
+	top:-250px;
+}
+#home h3{
+	margin:0;
+	text-align:center;
+}
+#kanji-hold{
+	display:inline-block;
+}
+#right-nav{
+	float:right;
+}
 </style>
 </head>
 
 <body>
 	<div id="all">
+		<div id="home">
+			<h3>Character 3 of 5</h3>
+			<div id="left-nav" class="nav"></div>
+			<div id="canvas-div"><canvas id="d" width="300" height="200" ></canvas><canvas id="c" width="300" height="200"></canvas></div>
+			<div id="kanji-hold">
+				<object></object>
+			</div>
+			<div class="nav" id="right-nav"></div>
+			<br>
+			<input id="editButton" value="edit" type="button"></input>
+		</div>
 		<div id="cards">
 			<div class="horizontal-only" id="window">
 				<div id="carousel">
@@ -182,6 +227,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		var newCard;
 		var svgName;
 		var svgDoc;
+		var editButton = document.getElementById("editButton");
 		var submitButton = document.getElementById("submitButton");
 		var initLineWidth
 		var svgPresent = false;
@@ -221,7 +267,17 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				$("#all").toggleClass("secondView");//css("top", "-130px");	
 			}
 		});
-		
+	
+		editButton.addEventListener("click", function(e){
+			$("#all").removeClass("secondView");
+			$("#all").removeClass("homeView");
+			player.setHeight(130);
+		});
+		submitButton.addEventListener("click", function(e){
+			$("#all").removeClass("secondView");
+			$("#all").addClass("homeView");
+			player.setHeight(250);
+		});
 		cancelButton.addEventListener('click', function(e){
 			$("#all").removeClass("secondView");
 			canNew = true;
@@ -333,9 +389,12 @@ player.on('learnerStateChanged', function(data){
 
 player.on('editableChanged', function(editable){
 	//greeting.readOnly = !editable.editable;
+	alert("surprise!");
 	//learnerName.readOnly = editable.editable;
 });
 
 });
+//Canvas drawing script starts here
+
 </script>
 </html>
