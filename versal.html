@@ -145,8 +145,7 @@ object{
 }
 #canvas-div canvas{
 	position:absolute;
-	width:300px;
-	height:200px;
+	border: 1px solid #ccc;
 }
 #slider{
 	height:5px;
@@ -187,7 +186,7 @@ object{
 		<div id="home">
 			<h3>Character 3 of 5</h3>
 			<div id="left-nav" class="nav"></div>
-			<div id="canvas-div"><canvas id="d" width="300" height="200" ></canvas><canvas id="c" width="300" height="200"></canvas></div>
+			<div id="canvas-div"><canvas id="stroke1" width="300" height="200" ></canvas><canvas id="receipient" width="300" height="200"></canvas></div>
 			<div id="kanji-hold">
 				<object></object>
 			</div>
@@ -397,15 +396,15 @@ player.on('editableChanged', function(editable){
 
 });
 //Canvas drawing script starts here
-	function midPointBtw(p1, p2) {
-	  return {
-	      x: p1.x + (p2.x - p1.x) / 2,
-		  y: p1.y + (p2.y - p1.y) / 2
-		    };
-		    }
-
-	    var el = document.getElementById('c');
-	    var eld = document.getElementById('d');
+function midPointBtw(p1, p2) {
+	return {
+x: p1.x + (p2.x - p1.x) / 2,
+	   y: p1.y + (p2.y - p1.y) / 2
+	};
+}
+	    var strokeCount = 2;
+	    var el = document.getElementById('receipient');
+	    var eld = document.getElementById('stroke1');
 	    var ctx = eld.getContext('2d');
 
 	    ctx.lineWidth = 10;
@@ -416,14 +415,17 @@ player.on('editableChanged', function(editable){
 	    var newCanv;
 	    var canvasDiv = document.getElementById("canvas-div");
 	    el.onmousedown = function(e) {
-	      isDrawing = true;
-	        points.push({ x: e.clientX, y: e.clientY });
-		};
+		    isDrawing = true;
+		    var x = e.offsetX==undefined?e.layerX:e.offsetX;
+		    var y = e.offsetY==undefined?e.layerY:e.offsetY;
+		    points.push({ x: x, y: y });
+	    };
 
 el.onmousemove = function(e) {
 	if (!isDrawing) return;
-
-	points.push({ x: e.clientX, y: e.clientY });
+	var x = e.offsetX==undefined?e.layerX:e.offsetX;
+	var y = e.offsetY==undefined?e.layerY:e.offsetY;
+	points.push({ x: x, y: y });
 
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -453,10 +455,16 @@ el.onmouseup = function(e) {
 	isDrawing = false;
 	//create new canvas
 	newCanv = document.createElement("canvas");  
-	canvasDiv.appendChild(newCanv);
+	newCanv.setAttribute("width", "300");
+	newCanv.setAttribute("height", "200");
+	newCanv.setAttribute("id", "stroke"+strokeCount);
+	canvasDiv.insertBefore(newCanv, el);
 	eld = newCanv;
 	ctx = eld.getContext('2d');
+	ctx.lineWidth = 10;
+	ctx.lineJoin = ctx.lineCap = 'round';
 	points.length = 0;
+	strokeCount++;
 };
 </script>
 </html>
