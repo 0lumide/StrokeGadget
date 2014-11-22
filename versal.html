@@ -62,7 +62,7 @@ width:20%;
 height:80%;
 content: "";
 }
-div{
+div, canvas{
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -138,14 +138,24 @@ object{
 	margin:10px;
 }
 #canvas-div{
+	float:left;
 	position:relative;
 	display:inline-block;
-	width:300px;
-	height:calc(100% - 50px);
+	width:200px;
+	height:200px;
+}
+html{
+	height:100%;
+	width:100%;
+	position:fixed;
 }
 #canvas-div canvas{
 	position:absolute;
 	border: 1px solid #ccc;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select:none;
 }
 #slider{
 	height:5px;
@@ -157,7 +167,7 @@ object{
 	top:-8px;
 }
 .nav{
-	height:calc(100% - 50px);
+	height:100%;
 	width:20px;
 	display:inline-block;
 	background:pink;
@@ -173,10 +183,41 @@ object{
 	text-align:center;
 }
 #kanji-hold{
+	height:200px;
+	width:200px;
+	float:left;
 	display:inline-block;
+}
+#left-nav{
+	float:left;
+}
+#left-nav+div{
+	width:calc(100% - 40px);
+	float:left;
+	height:200px;
 }
 #right-nav{
 	float:right;
+}
+#home h3+div{
+	width:100%;
+	height:200px;
+}
+.bottom-controls{
+	margin:5px 0px 0px 20px;
+}
+#controls{
+	width:calc(100% - 400px);
+	height:200px;
+	float:left;
+	margin-top:75px;
+	display:inline-block;
+}
+#controls input{
+	display:block;
+	width:100px;
+	margin-left:calc(50% - 50px);
+	margin-bottom:5px;
 }
 </style>
 </head>
@@ -185,14 +226,23 @@ object{
 	<div id="all">
 		<div id="home">
 			<h3>Character 3 of 5</h3>
-			<div id="left-nav" class="nav"></div>
-			<div id="canvas-div"><canvas id="stroke1" width="300" height="200" ></canvas><canvas id="receipient" width="300" height="200"></canvas></div>
-			<div id="kanji-hold">
-				<object></object>
+			<div>
+				<div id="left-nav" class="nav"></div>
+				<div>
+					<div id="canvas-div"><canvas id="stroke1" width="200" height="200" ></canvas><canvas id="receipient" width="200" height="200"></canvas></div>
+					<div id="controls">
+						<input id="replay" type="button" value="Replay">
+						<input id="nextStroke" type="button" value="Next">
+					</div>
+					<div id="kanji-hold">
+						<object></object>
+					</div>
+				</div>
+				<div class="nav" id="right-nav"></div>
 			</div>
-			<div class="nav" id="right-nav"></div>
-			<br>
-			<input id="editButton" value="edit" type="button"></input>
+			<div class="bottom-controls">
+				<input id="editButton" value="edit" type="button"></input>
+			</div>
 		</div>
 		<div id="cards">
 			<div class="horizontal-only" id="window">
@@ -286,12 +336,18 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		function newKanji(){
 			makeNewCard("assets/svg/0"+svgName+".svg");
 		}
+		function clearIt(){
+			$(select).attr("disabled", true);
+			$("#showInput").removeClass("visible");
+		}
 		kInput.addEventListener("input", function(e){
-				if(kInput.value.length != 1)
-				return;
+				if(kInput.value.length != 1){
+					clearIt();
+					return;
+				}
 				var inp = kInput.value;
 				var n = inp.charCodeAt(0);
-				if((n >= 19968)&&(n<=40879)||((n>13312)&&(n < 19903))){
+				if(isKana(n)||(n >= 19968)&&(n<=40879)||((n>13312)&&(n < 19903))){
 				//Mofaducker go find this kanji
 					if(file_exists("assets/svg/0"+n.toString(16)+".svg")){
 						//$("#showInput").addClass("visible");
@@ -300,6 +356,8 @@ window.addEventListener('HTMLImportsLoaded', function(){
 						$("#svgImg").attr("data", "assets/svg/0"+n.toString(16)+".svg");
 					}
 				}
+				else
+					clearIt();
 
 				})
 		function makeNewCard(src){
@@ -314,6 +372,8 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			newKanji();
 			canNew = true;
 			$("#all").removeClass("secondView");
+			$("#kanjiInput").val("");
+			clearIt();
 			//alert("fuck");
 		});
 
@@ -322,6 +382,36 @@ horizontalGutter:5,
 verticalGutter:5,
 'showArrows': false
 });
+function isKana(n){
+	//outside kana range
+	if((n <= 12353) || (n >= 12539)){
+		return false;
+	}
+	//between the two kanas
+	else if((n > 12436)  && (n < 12450)){
+		return false;
+	}
+	//some little hiragana
+	else if((n ==12355)||(n == 123577) || (n == 12359) || (n == 12361))
+		return false;
+	//Hiragana
+	else if((n > 12353) && (n < 12436)){
+		if((n == 12387)||(n == 12419) || (n == 12421) || (n == 12423) ||(n == 12430))
+			return false;
+		return true;
+	}
+	//Katakana
+	else if((n > 12449) && (n < 12539)){
+		//Some small katakana
+		if((n == 12534)||(n == 12533) || (n == 12515) || (n == 12517) || (n == 12519) || (n == 12526) || (n == 12483))
+			return false;
+		else if((n == 12451) || (n == 12453) || (n == 12455) || (n == 12457))
+			return false;
+		return true;
+	}
+
+	return false;
+}
 function file_exists (url) {
 	// http://kevin.vanzonneveld.net
 	// +   original by: Enrique Gonzalez
@@ -402,24 +492,26 @@ x: p1.x + (p2.x - p1.x) / 2,
 	   y: p1.y + (p2.y - p1.y) / 2
 	};
 }
-	    var strokeCount = 2;
-	    var el = document.getElementById('receipient');
-	    var eld = document.getElementById('stroke1');
-	    var ctx = eld.getContext('2d');
+var strokeCount = 2;
+var el = document.getElementById('receipient');
+var eld = document.getElementById('stroke1');
+var ctx = eld.getContext('2d');
 
-	    ctx.lineWidth = 10;
-	    ctx.lineJoin = ctx.lineCap = 'round';
+ctx.lineWidth = 10;
+ctx.lineJoin = ctx.lineCap = 'round';
 
-	    var isDrawing, points = [ ];
+var isDrawing = false;
+var points = [ ];
 
-	    var newCanv;
-	    var canvasDiv = document.getElementById("canvas-div");
-	    el.onmousedown = function(e) {
-		    isDrawing = true;
-		    var x = e.offsetX==undefined?e.layerX:e.offsetX;
-		    var y = e.offsetY==undefined?e.layerY:e.offsetY;
-		    points.push({ x: x, y: y });
-	    };
+var newCanv;
+var canvasDiv = document.getElementById("canvas-div");
+
+el.onmousedown = function(e) {
+	isDrawing = true;
+	var x = e.offsetX==undefined?e.layerX:e.offsetX;
+	var y = e.offsetY==undefined?e.layerY:e.offsetY;
+	points.push({ x: x, y: y });
+};
 
 el.onmousemove = function(e) {
 	if (!isDrawing) return;
@@ -451,20 +543,22 @@ el.onmousemove = function(e) {
 	ctx.stroke();
 };
 
-el.onmouseup = function(e) {
-	isDrawing = false;
-	//create new canvas
-	newCanv = document.createElement("canvas");  
-	newCanv.setAttribute("width", "300");
-	newCanv.setAttribute("height", "200");
-	newCanv.setAttribute("id", "stroke"+strokeCount);
-	canvasDiv.insertBefore(newCanv, el);
-	eld = newCanv;
-	ctx = eld.getContext('2d');
-	ctx.lineWidth = 10;
-	ctx.lineJoin = ctx.lineCap = 'round';
-	points.length = 0;
-	strokeCount++;
+$(window)[0].onmouseup = function(e) {
+	if(isDrawing){
+		isDrawing = false;
+		//create new canvas
+		newCanv = document.createElement("canvas");  
+		newCanv.setAttribute("width", "200");
+		newCanv.setAttribute("height", "200");
+		newCanv.setAttribute("id", "stroke"+strokeCount);
+		canvasDiv.insertBefore(newCanv, el);
+		eld = newCanv;
+		ctx = eld.getContext('2d');
+		ctx.lineWidth = 10;
+		ctx.lineJoin = ctx.lineCap = 'round';
+		points.length = 0;
+		strokeCount++;
+	}
 };
 </script>
 </html>
