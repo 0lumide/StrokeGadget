@@ -18,49 +18,53 @@ height:100px;
 position:relative;
 }
 #carousel{
-position:absolute;
-top:50%;
-height:80px;
-width:1000px;
-
+	position:absolute;
+	top:50%;
+	height:80px;
 }
 #cards, #newKanji{
-height:130px;
-margin:0;
-min-width:630px;
+	height:130px;
+	margin:0;
 }
 .card{
-height:80px;
-width:80px;
-display:inline-block;
+	height:80px;
+	width:80px;
+	position:relative;
+	top:-1px;
+	border: solid #eee;
+	border-width:1px;
+	display:inline-block;
 }
 #ver{
-position:absolute;
-	 margin-top:-10%;
-top:50%;
-background:#bbb;
-width:80%;
-left:10%;
-height:20%;
-display:block;
-content:"";
+	position:absolute;
+	margin-top:-10%;
+	top:50%;
+	background:#bbb;
+	width:80%;
+	left:10%;
+	height:20%;
+	display:block;
+	content:"";
 }
 #newCard{
-background:#eee;
-border:solid;
-position:relative;
-       border-width:1px;
-       border-color:#aaa;
+	cursor: pointer;
+	top:0;
+	background:#eee;
+	border:solid;
+	position:relative;
+	border-width:1px;
+	border-color:#aaa;
+	margin-left:20px;
 }
 #hor{
-left:40%;
-position:absolute;
-	 margin-top:-40%;
-top:50%;
-background:#bbb;
-width:20%;
-height:80%;
-content: "";
+	left:40%;
+	position:absolute;
+	margin-top:-40%;
+	top:50%;
+	background:#bbb;
+	width:20%;
+	height:80%;
+	content: "";
 }
 div, canvas{
 	-webkit-box-sizing: border-box;
@@ -68,15 +72,14 @@ div, canvas{
 	box-sizing: border-box;
 }
 #submitButton{
-position:absolute;
-right:20px;
+	position:absolute;
 }
 .horizontal-only{
-height: auto;
+	height: auto;
 	max-height: 120px;
 }
 .secondView{
-top:-130px !important;
+	top:-130px !important;
 }
 .homeView{
 	top:250px !important;
@@ -100,14 +103,14 @@ top:-130px !important;
 	border-width:1px;
 }
 #all{
-width:100%;
-top:0px;
-position:absolute;
-height:130px;
+	width:100%;
+	top:0px;
+	position:absolute;
+	height:130px;
        -webkit-transition: all 1s;
        -moz-transition: all 1s;
        -o-transition: all 1s;
-transition: all 1s;
+	transition: all 1s;
 }
 .visible{
 	visibility: visible !important;
@@ -219,13 +222,32 @@ html{
 	margin-left:calc(50% - 50px);
 	margin-bottom:5px;
 }
+#instruction{
+	background: #ddd;
+	width: 100%;
+	height:100%;
+	position:absolute;
+	z-index:9;
+	display:block;
+}
+#instruction h1{
+	line-height:200px;
+	text-align:center;	
+}
+#instruction img{
+	width:20px;
+	height:20px;
+}
 </style>
 </head>
 
 <body>
-	<div id="all">
+	<div id="all" class="homeView">
 		<div id="home">
-			<h3>Character 3 of 5</h3>
+			<div id="instruction">
+				<h1>Click on the icon: <img title="Not me, it should be on the left"  scr="placehol.it/20x20"> to begin</h1>
+			</div>
+			<h3>Character 0 of 0</h3>
 			<div>
 				<div id="left-nav" class="nav"></div>
 				<div>
@@ -241,7 +263,8 @@ html{
 				<div class="nav" id="right-nav"></div>
 			</div>
 			<div class="bottom-controls">
-				<input id="editButton" value="edit" type="button"></input>
+				<input id="showGrid" type="checkbox"></input>
+				<label for="showGrid">Show Grid</label>
 			</div>
 		</div>
 		<div id="cards">
@@ -278,10 +301,12 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		var newCard;
 		var svgName;
 		var svgDoc;
+		var svgPreName = "assets/svg/0";
 		var editButton = document.getElementById("editButton");
 		var submitButton = document.getElementById("submitButton");
 		var initLineWidth
 		var svgPresent = false;
+		var charArray = [];
 		var select = document.getElementById("select");
 		var svgImg = document.getElementById("svgImg");
 		var cancelButton = document.getElementById("cancelInput");
@@ -289,6 +314,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		var kInput = document.getElementById("kanjiInput");
 		var carousel = document.getElementById('carousel');
 		var newButton = document.getElementById('newCard');
+		
 		svgImg.addEventListener('load',function(e){
 			$("#showInput").addClass("visible");
 			//initialize the width and colors maybe
@@ -297,33 +323,24 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", initLineWidth)
 			//var delta = svgDoc.getElementById("delta");
 		});
+
 		$("#slider").slider({max:10, min:1, step:1, change: function(e, ui) {
 		          player.setAttribute("widthOfStrokes", ui.value);}
 		});
 		var player = new VersalPlayerAPI();
 		player.setPropertySheetAttributes({
-			widthOfStrokes:  { type: 'Range', min: 1, max: 10, step: 1 }
+			//widthOfStrokes:  { type: 'Range', min: 1, max: 10, step: 1 }
 		});
 
-		//document.getElementById("showNum")
-
-		/*  greeting.addEventListener('change', function(e){
-		    player.setAttribute(greeting.name, greeting.value);
-		    });
-		 */
 		newButton.addEventListener('click', function(e){
 			if(canNew){
+				$(kInput).focus();
 				canNew = false;
 				//move container up to show new kanji input
 				$("#all").toggleClass("secondView");//css("top", "-130px");	
 			}
 		});
 	
-		editButton.addEventListener("click", function(e){
-			$("#all").removeClass("secondView");
-			$("#all").removeClass("homeView");
-			player.setHeight(130);
-		});
 		submitButton.addEventListener("click", function(e){
 			$("#all").removeClass("secondView");
 			$("#all").addClass("homeView");
@@ -334,7 +351,14 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			canNew = true;
 		})
 		function newKanji(){
-			makeNewCard("assets/svg/0"+svgName+".svg");
+			charArray.push({
+				name:svgName,
+				width:initLineWidth,
+				showNum:true,
+			});
+			player.setAttributes({"charArray": charArray});
+			console.log("stored");
+			//makeNewCard(svgPreName+svgName+".svg", initLineWidth);
 		}
 		function clearIt(){
 			$(select).attr("disabled", true);
@@ -360,129 +384,137 @@ window.addEventListener('HTMLImportsLoaded', function(){
 					clearIt();
 
 				})
-		function makeNewCard(src){
+		function makeNewCard(src, lineWidth){
 			newCard = document.createElement("div");
 			var newSvg = document.createElement("object");
 			$(newSvg).attr("data", src);
 			newCard.setAttribute("class", "card");
 			newCard.appendChild(newSvg);
+			$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", lineWidth);
 			carousel.insertBefore(newCard, newButton);
+			$(carousel).width($(newCard).width() + $(carousel).width());
 		}
 		select.addEventListener("click", function(e){
+			reinitialise();
 			newKanji();
 			canNew = true;
 			$("#all").removeClass("secondView");
-			$("#kanjiInput").val("");
+			$(kInput).val("");
 			clearIt();
-			//alert("fuck");
 		});
 
-		$('#window').jScrollPane({
-horizontalGutter:5,
-verticalGutter:5,
-'showArrows': false
-});
-function isKana(n){
-	//outside kana range
-	if((n <= 12353) || (n >= 12539)){
-		return false;
-	}
-	//between the two kanas
-	else if((n > 12436)  && (n < 12450)){
-		return false;
-	}
-	//some little hiragana
-	else if((n ==12355)||(n == 123577) || (n == 12359) || (n == 12361))
-		return false;
-	//Hiragana
-	else if((n > 12353) && (n < 12436)){
-		if((n == 12387)||(n == 12419) || (n == 12421) || (n == 12423) ||(n == 12430))
-			return false;
-		return true;
-	}
-	//Katakana
-	else if((n > 12449) && (n < 12539)){
-		//Some small katakana
-		if((n == 12534)||(n == 12533) || (n == 12515) || (n == 12517) || (n == 12519) || (n == 12526) || (n == 12483))
-			return false;
-		else if((n == 12451) || (n == 12453) || (n == 12455) || (n == 12457))
-			return false;
-		return true;
-	}
-
-	return false;
-}
-function file_exists (url) {
-	// http://kevin.vanzonneveld.net
-	// +   original by: Enrique Gonzalez
-	// +      input by: Jani Hartikainen
-	// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-	// %        note 1: This function uses XmlHttpRequest and cannot retrieve resource from different domain.
-	// %        note 1: Synchronous so may lock up browser, mainly here for study purposes.
-	// *     example 1: file_exists('http://kevin.vanzonneveld.net/pj_test_supportfile_1.htm');
-	// *     returns 1: '123'
-	var req = this.window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
-	if (!req) {
-		throw new Error('XMLHttpRequest not supported');
-	}
-
-	// HEAD Results are usually shorter (faster) than GET
-	req.open('HEAD', url, false);
-	req.send(null);
-	if (req.status == 200) {
-		return true;
-	}
-
-	return false;
-}
-$('.jspDrag').hide();
-$('.jspScrollable').mouseenter(function(){
-		$(this).find('.jspDrag').stop(true, true).fadeIn('slow');
+		$(window).resize(function(){
+			console.log("Resized");
+			reinitialise();
 		});
-$('.jspScrollable').mouseleave(function(){
-		$(this).find('.jspDrag').stop(true, true).fadeOut('slow');
-		});
-player.setHeight(130);
-player.startListening();
+		function isKana(n){
+			//outside kana range
+			if((n <= 12353) || (n >= 12539)){
+				return false;
+			}
+			//between the two kanas
+			else if((n > 12436)  && (n < 12450)){
+				return false;
+			}
+			//some little hiragana
+			else if((n ==12355)||(n == 123577) || (n == 12359) || (n == 12361))
+				return false;
+			//Hiragana
+			else if((n > 12353) && (n < 12436)){
+				if((n == 12387)||(n == 12419) || (n == 12421) || (n == 12423) ||(n == 12430))
+					return false;
+				return true;
+			}
+			//Katakana
+			else if((n > 12449) && (n < 12539)){
+				//Some small katakana
+				if((n == 12534)||(n == 12533) || (n == 12515) || (n == 12517) || (n == 12519) || (n == 12526) || (n == 12483))
+					return false;
+				else if((n == 12451) || (n == 12453) || (n == 12455) || (n == 12457))
+					return false;
+				return true;
+			}
 
-player.on('attributesChanged', function(data){
-	console.log("poop1");
-	if(data.widthOfStrokes) {
-		if(!svgPresent){
-			initLineWidth = data.widthOfStrokes;
-		}else{
-			$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", data.widthOfStrokes);
+			return false;
 		}
-		console.log("poop");
+		function file_exists (url) {
+			// http://kevin.vanzonneveld.net
+			// +   original by: Enrique Gonzalez
+			// +      input by: Jani Hartikainen
+			// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+			// %        note 1: This function uses XmlHttpRequest and cannot retrieve resource from different domain.
+			// %        note 1: Synchronous so may lock up browser, mainly here for study purposes.
+			// *     example 1: file_exists('http://kevin.vanzonneveld.net/pj_test_supportfile_1.htm');
+			// *     returns 1: '123'
+			var req = this.window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+			if (!req) {
+				throw new Error('XMLHttpRequest not supported');
+			}
 
-		$("#slider").slider("value", data.widthOfStrokes);
-	}
-	else if(data.colorCode){
-		if(data.colorCode == 1)
-			$("#diffColor").prop("checked", true);
-		else 
-			$("#diffColor").prop("checked", false);
+			// HEAD Results are usually shorter (faster) than GET
+			req.open('HEAD', url, false);
+			req.send(null);
+			if (req.status == 200) {
+				return true;
+			}
 
-	}
-	else if(data.strokeNumber){
-		if(data.strokeNumber == 1)
-			$("#showNum").prop("checked", true);
-		else
-			$("#showNum").prop("checked", false);
-	};
-});
+			return false;
+		}
+		$('.jspDrag').hide();
+		$('.jspScrollable').mouseenter(function(){
+			$(this).find('.jspDrag').stop(true, true).fadeIn('slow');
+		});
+		$('.jspScrollable').mouseleave(function(){
+			$(this).find('.jspDrag').stop(true, true).fadeOut('slow');
+		});
+		player.setHeight(250);
+		player.startListening();
 
-player.on('learnerStateChanged', function(data){
-	if(data.learnerName) {
-		learnerName.value = data.learnerName;
-	};
-});
+		player.on('attributesChanged', function(data){
+			if(data.widthOfStrokes) {
+				initLineWidth = data.widthOfStrokes
+				if(svgPresent){
+					$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", data.widthOfStrokes);
+				}
+				$("#slider").slider("value", data.widthOfStrokes);
+			}
+			else if(data.charArray){
+				console.log("new Char");
+				var len = data.charArray.length;
+				charArray = data.charArray;
+				$(".card").not("#newCard").remove();
+				for(i = 0; i < len; i++){
+					makeNewCard(svgPreName+data.charArray[i].name+".svg", data.charArray[i].width);
+				}
+			}
+			else if(data.strokeNumber){
+				if(data.strokeNumber == 1)
+					$("#showNum").prop("checked", true);
+				else
+					$("#showNum").prop("checked", false);
+			};
+		});
 
-player.on('editableChanged', function(editable){
-	//greeting.readOnly = !editable.editable;
-	alert("surprise!");
-	//learnerName.readOnly = editable.editable;
-});
+		player.on('learnerStateChanged', function(data){
+			if(data.learnerName) {
+				learnerName.value = data.learnerName;
+			};
+		});
+
+		player.on('editableChanged', function(editable){
+			if(editable.editable){
+				$("#instruction").fadeOut(800);
+				$("#all").removeClass("secondView");
+                        	$("#all").removeClass("homeView");
+                        	player.setHeight(130);
+			}
+			else{
+				$("#all").removeClass("secondView");
+                        	$("#all").addClass("homeView");
+                        	player.setHeight(250);
+			}
+			//learnerName.readOnly = editable.editable;
+		});
 
 });
 //Canvas drawing script starts here
@@ -496,7 +528,11 @@ var strokeCount = 2;
 var el = document.getElementById('receipient');
 var eld = document.getElementById('stroke1');
 var ctx = eld.getContext('2d');
-
+var api = $('#window').jScrollPane({
+	horizontalGutter:5,
+	verticalGutter:5,
+	'showArrows': false
+}).data('jsp');
 ctx.lineWidth = 10;
 ctx.lineJoin = ctx.lineCap = 'round';
 
@@ -542,7 +578,10 @@ el.onmousemove = function(e) {
 	ctx.lineTo(p1.x, p1.y);
 	ctx.stroke();
 };
-
+function reinitialise(){
+	api.reinitialise();
+	console.log("reinitialised");
+}
 $(window)[0].onmouseup = function(e) {
 	if(isDrawing){
 		isDrawing = false;
