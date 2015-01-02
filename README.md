@@ -1,4 +1,4 @@
-# My Versal Stroke Gadget gadget
+# My Versal StrokeGadget gadget
 
 This is a gadget, that utilizes versal-gadget-api to practice strokes.
 It uses data from the kanjiVg project
@@ -11,5 +11,5 @@ As an author, you can edit choose the characters to be shown in the student view
 * install bower if you haven't already with `npm install -g bower`.
 * Run `bower install`
 * Run `versal preview` to preview gadget in Versal player.
-StrokeGadget
-============
+
+###StrokeGadget
