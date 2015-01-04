@@ -159,6 +159,10 @@ html{
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select:none;
+	cursor: pointer;
+}
+#canvas-div canvas:active{
+	cursor: crosshair;
 }
 #slider{
 	height:5px;
@@ -170,8 +174,10 @@ html{
 	top:-8px;
 }
 .nav{
+	cursor:pointer;
 	height:100%;
 	width:20px;
+	margin: 0 5px 0 5px;
 	display:inline-block;
 	background:pink;
 }
@@ -195,7 +201,7 @@ html{
 	float:left;
 }
 #left-nav+div{
-	width:calc(100% - 40px);
+	width:calc(100% - 60px);
 	float:left;
 	height:200px;
 }
@@ -356,7 +362,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				width:initLineWidth,
 				showNum:true,
 			});
-			player.setAttributes({"charArray": charArray});
+			player.setAttributes(charArray[1]);
 			console.log("stored");
 			//makeNewCard(svgPreName+svgName+".svg", initLineWidth);
 		}
@@ -479,6 +485,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				$("#slider").slider("value", data.widthOfStrokes);
 			}
 			else if(data.charArray){
+				$("#instruction").hide();
 				console.log("new Char");
 				var len = data.charArray.length;
 				charArray = data.charArray;
@@ -533,7 +540,7 @@ var api = $('#window').jScrollPane({
 	verticalGutter:5,
 	'showArrows': false
 }).data('jsp');
-ctx.lineWidth = 10;
+ctx.lineWidth = 5;
 ctx.lineJoin = ctx.lineCap = 'round';
 
 var isDrawing = false;
@@ -593,7 +600,7 @@ $(window)[0].onmouseup = function(e) {
 		canvasDiv.insertBefore(newCanv, el);
 		eld = newCanv;
 		ctx = eld.getContext('2d');
-		ctx.lineWidth = 10;
+		ctx.lineWidth = 5;
 		ctx.lineJoin = ctx.lineCap = 'round';
 		points.length = 0;
 		strokeCount++;
