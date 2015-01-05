@@ -147,6 +147,24 @@ object{
 	width:200px;
 	height:200px;
 }
+.grid:after{
+	content: "";
+	display:block;
+	border: dashed;
+	border-width:1px;
+	width:200px;
+	height:100px;
+}
+.grid:before{
+        content: "";
+	position:absolute;
+        display:block;
+        border: dashed;
+        border-width:1px;
+        width:100px;
+        height:200px;
+}
+
 html{
 	height:100%;
 	width:100%;
@@ -229,12 +247,12 @@ html{
 	margin-bottom:5px;
 }
 #instruction{
+	display:none;
 	background: #ddd;
 	width: 100%;
 	height:100%;
 	position:absolute;
 	z-index:9;
-	display:block;
 }
 #instruction h1{
 	line-height:200px;
@@ -243,6 +261,9 @@ html{
 #instruction img{
 	width:20px;
 	height:20px;
+}
+#editButton{
+	display:none;
 }
 </style>
 </head>
@@ -269,6 +290,7 @@ html{
 				<div class="nav" id="right-nav"></div>
 			</div>
 			<div class="bottom-controls">
+				<input id="editButton" value="edit" type="button"></input>
 				<input id="showGrid" type="checkbox"></input>
 				<label for="showGrid">Show Grid</label>
 			</div>
@@ -330,6 +352,10 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			//var delta = svgDoc.getElementById("delta");
 		});
 
+		$('#showGrid').click(function() {
+			$("#canvas-div").toggleClass("grid");
+		});
+
 		$("#slider").slider({max:10, min:1, step:1, change: function(e, ui) {
 		          player.setAttribute("widthOfStrokes", ui.value);}
 		});
@@ -337,7 +363,13 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		player.setPropertySheetAttributes({
 			//widthOfStrokes:  { type: 'Range', min: 1, max: 10, step: 1 }
 		});
+		
+		editButton.addEventListener('click', function(e){
+			$("#all").removeClass("secondView");
+			$("#all").removeClass("homeView");
+			player.setHeight(130);
 
+		});
 		newButton.addEventListener('click', function(e){
 			if(canNew){
 				$(kInput).focus();
@@ -364,7 +396,6 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			});
 			player.setAttributes(charArray);
 			console.log("stored");
-			//makeNewCard(svgPreName+svgName+".svg", initLineWidth);
 		}
 		function clearIt(){
 			$(select).attr("disabled", true);
@@ -398,9 +429,9 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			newCard.setAttribute("class", "card");
 			newCard.appendChild(newSvg);
 			console.log(name);
-			//$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 			carousel.insertBefore(newCard, newButton);
 			$(carousel).width($(newCard).width() + $(carousel).width());
+			$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 		}
 		select.addEventListener("click", function(e){
 			reinitialise();
@@ -487,17 +518,12 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				$("#slider").slider("value", data.widthOfStrokes);
 			}
 			else if(data.charArray){
-				$("#instruction").hide();
+				//$("#instruction").hide();
 				console.log("new Char");
 				var len = data.charArray.length;
 				var charArr = data.charArray;
 				$(".card").not("#newCard").remove();
-				var p = data.charArray;
-				/*for (var key in p) {
-					if (p.hasOwnProperty(key)) {
-						alert(key + " -> " + p[key]);
-					}
-				}*/
+				charArray = data;
 				for(i = 0; i < len; i++){
 					makeNewCard(charArr[i].name, charArr[i].width);
 				}
@@ -522,13 +548,17 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				$("#all").removeClass("secondView");
                         	$("#all").removeClass("homeView");
                         	player.setHeight(130);
+				$(editButton).show();
 			}
 			else{
+				//Not sure if I want this behaviour
+				if(!charArray["charArray"].length)
+					$("#instruction").fadeIn(5000);
 				$("#all").removeClass("secondView");
                         	$("#all").addClass("homeView");
                         	player.setHeight(250);
+				$(editButton).hide();
 			}
-			//learnerName.readOnly = editable.editable;
 		});
 
 });
