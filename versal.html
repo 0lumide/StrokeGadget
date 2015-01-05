@@ -312,7 +312,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		var submitButton = document.getElementById("submitButton");
 		var initLineWidth
 		var svgPresent = false;
-		var charArray = [];
+		var charArray = {"charArray": []};
 		var select = document.getElementById("select");
 		var svgImg = document.getElementById("svgImg");
 		var cancelButton = document.getElementById("cancelInput");
@@ -357,12 +357,12 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			canNew = true;
 		})
 		function newKanji(){
-			charArray.push({
-				name:svgName,
-				width:initLineWidth,
-				showNum:true,
+			charArray["charArray"].push({
+				"name":svgName,
+				"width":initLineWidth,
+				"showNum":true
 			});
-			player.setAttributes(charArray[1]);
+			player.setAttributes(charArray);
 			console.log("stored");
 			//makeNewCard(svgPreName+svgName+".svg", initLineWidth);
 		}
@@ -390,13 +390,15 @@ window.addEventListener('HTMLImportsLoaded', function(){
 					clearIt();
 
 				})
-		function makeNewCard(src, lineWidth){
+		function makeNewCard(name, lineWidth){
+			var src = svgPreName+name+".svg"
 			newCard = document.createElement("div");
 			var newSvg = document.createElement("object");
 			$(newSvg).attr("data", src);
 			newCard.setAttribute("class", "card");
 			newCard.appendChild(newSvg);
-			$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", lineWidth);
+			console.log(name);
+			//$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 			carousel.insertBefore(newCard, newButton);
 			$(carousel).width($(newCard).width() + $(carousel).width());
 		}
@@ -488,10 +490,16 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				$("#instruction").hide();
 				console.log("new Char");
 				var len = data.charArray.length;
-				charArray = data.charArray;
+				var charArr = data.charArray;
 				$(".card").not("#newCard").remove();
+				var p = data.charArray;
+				/*for (var key in p) {
+					if (p.hasOwnProperty(key)) {
+						alert(key + " -> " + p[key]);
+					}
+				}*/
 				for(i = 0; i < len; i++){
-					makeNewCard(svgPreName+data.charArray[i].name+".svg", data.charArray[i].width);
+					makeNewCard(charArr[i].name, charArr[i].width);
 				}
 			}
 			else if(data.strokeNumber){
