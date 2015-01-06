@@ -182,6 +182,9 @@ html{
 #canvas-div canvas:active{
 	cursor: crosshair;
 }
+.nodraw canvas:active, .nodraw canvas{
+        cursor: not-allowed !important;
+}
 #slider{
 	height:5px;
 	margin:5px;
@@ -282,6 +285,7 @@ html{
 					<div id="controls">
 						<input id="replay" type="button" value="Replay">
 						<input id="nextStroke" type="button" value="Next">
+						<input id="undoButton" type="button" value="Undo">
 					</div>
 					<div id="kanji-hold">
 						<object></object>
@@ -425,13 +429,19 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			var src = svgPreName+name+".svg"
 			newCard = document.createElement("div");
 			var newSvg = document.createElement("object");
-			$(newSvg).attr("data", src);
 			newCard.setAttribute("class", "card");
 			newCard.appendChild(newSvg);
 			console.log(name);
 			carousel.insertBefore(newCard, newButton);
+			$(newSvg).attr("data", src);
 			$(carousel).width($(newCard).width() + $(carousel).width());
-			$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
+			newSvg.addEventListener("load", function(e){
+					console.log(newSvg.contentDocument);
+					purpleLion = newSvg.contentDocument;
+					$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
+					console.log("line-width: "+lineWidth);
+					});
+
 		}
 		select.addEventListener("click", function(e){
 			reinitialise();
@@ -517,7 +527,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				}
 				$("#slider").slider("value", data.widthOfStrokes);
 			}
-			else if(data.charArray){
+			if(data.charArray){
 				//$("#instruction").hide();
 				console.log("new Char");
 				var len = data.charArray.length;
@@ -544,6 +554,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 
 		player.on('editableChanged', function(editable){
 			if(editable.editable){
+				$("#instruction").finish();
 				$("#instruction").fadeOut(800);
 				$("#all").removeClass("secondView");
                         	$("#all").removeClass("homeView");
@@ -551,9 +562,12 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				$(editButton).show();
 			}
 			else{
+				canNew = true;
 				//Not sure if I want this behaviour
-				if(!charArray["charArray"].length)
+				if(!charArray["charArray"].length){
+					$("#instruction").finish();
 					$("#instruction").fadeIn(5000);
+				}
 				$("#all").removeClass("secondView");
                         	$("#all").addClass("homeView");
                         	player.setHeight(250);
@@ -572,17 +586,19 @@ x: p1.x + (p2.x - p1.x) / 2,
 var strokeCount = 2;
 var el = document.getElementById('receipient');
 var eld = document.getElementById('stroke1');
+var purpleLion;
 var ctx = eld.getContext('2d');
 var api = $('#window').jScrollPane({
 	horizontalGutter:5,
 	verticalGutter:5,
 	'showArrows': false
 }).data('jsp');
-ctx.lineWidth = 5;
+ctx.lineWidth = 6;
 ctx.lineJoin = ctx.lineCap = 'round';
 
 var isDrawing = false;
-var points = [ ];
+var saved = true;
+var points = [];
 
 var newCanv;
 var canvasDiv = document.getElementById("canvas-div");
@@ -621,6 +637,7 @@ el.onmousemove = function(e) {
 	// we wait for the next point to be able to calculate
 	// the bezier control point
 	ctx.lineTo(p1.x, p1.y);
+	saved = false;
 	ctx.stroke();
 };
 function reinitialise(){
@@ -630,18 +647,22 @@ function reinitialise(){
 $(window)[0].onmouseup = function(e) {
 	if(isDrawing){
 		isDrawing = false;
-		//create new canvas
-		newCanv = document.createElement("canvas");  
-		newCanv.setAttribute("width", "200");
-		newCanv.setAttribute("height", "200");
-		newCanv.setAttribute("id", "stroke"+strokeCount);
-		canvasDiv.insertBefore(newCanv, el);
-		eld = newCanv;
-		ctx = eld.getContext('2d');
-		ctx.lineWidth = 5;
-		ctx.lineJoin = ctx.lineCap = 'round';
-		points.length = 0;
-		strokeCount++;
+		points = [];
+		if(!saved){
+			console.log("save");
+			saved = true;
+			//create new canvas
+			newCanv = document.createElement("canvas");  
+			newCanv.setAttribute("width", "200");
+			newCanv.setAttribute("height", "200");
+			newCanv.setAttribute("id", "stroke"+strokeCount);
+			canvasDiv.insertBefore(newCanv, el);
+			eld = newCanv;
+			ctx = eld.getContext('2d');
+			ctx.lineWidth = 6;
+			ctx.lineJoin = ctx.lineCap = 'round';
+			strokeCount++;
+		}
 	}
 };
 </script>
