@@ -399,7 +399,6 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				"showNum":true
 			});
 			player.setAttributes(charArray);
-			console.log("stored");
 		}
 		function clearIt(){
 			$(select).attr("disabled", true);
@@ -431,15 +430,11 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			var newSvg = document.createElement("object");
 			newCard.setAttribute("class", "card");
 			newCard.appendChild(newSvg);
-			console.log(name);
 			carousel.insertBefore(newCard, newButton);
 			$(newSvg).attr("data", src);
 			$(carousel).width($(newCard).width() + $(carousel).width());
 			newSvg.addEventListener("load", function(e){
-					console.log(newSvg.contentDocument);
-					purpleLion = newSvg.contentDocument;
 					$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
-					console.log("line-width: "+lineWidth);
 					});
 
 		}
@@ -453,7 +448,6 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		});
 
 		$(window).resize(function(){
-			console.log("Resized");
 			reinitialise();
 		});
 		function isKana(n){
@@ -529,7 +523,6 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			}
 			if(data.charArray){
 				//$("#instruction").hide();
-				console.log("new Char");
 				var len = data.charArray.length;
 				var charArr = data.charArray;
 				$(".card").not("#newCard").remove();
@@ -586,7 +579,6 @@ x: p1.x + (p2.x - p1.x) / 2,
 var strokeCount = 2;
 var el = document.getElementById('receipient');
 var eld = document.getElementById('stroke1');
-var purpleLion;
 var ctx = eld.getContext('2d');
 var api = $('#window').jScrollPane({
 	horizontalGutter:5,
@@ -642,7 +634,6 @@ el.onmousemove = function(e) {
 };
 function reinitialise(){
 	api.reinitialise();
-	console.log("reinitialised");
 }
 $(window)[0].onmouseup = function(e) {
 	if(isDrawing){
