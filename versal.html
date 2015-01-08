@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html>
 <head>
 <title>Empty gadget</title>
@@ -151,20 +151,35 @@ object{
 	content: "";
 	display:block;
 	border: dashed;
-	border-width:1px;
-	width:200px;
-	height:100px;
+	border-width:0 0 1px 0;
+	width:100%;
+	top:0px;
+	height:50%;
+}
+#kanji-hold .animHold{
+	border:dashed 1px rgba(255, 255, 255, 0);
+	border-width: 1px 1px 1px 1px;
+	border-color:#fff;
+}
+
+#kanji-hold .grid{
+	border-color: #000;
 }
 .grid:before{
         content: "";
 	position:absolute;
         display:block;
         border: dashed;
-        border-width:1px;
-        width:100px;
-        height:200px;
+        border-width:0 1px 0 0;
+        width:50%;
+        height:100%;
 }
-
+.animHold{
+	display:inline-block;
+	height:100%;
+	width:200px;
+	position:relative;
+}
 html{
 	height:100%;
 	width:100%;
@@ -216,11 +231,17 @@ html{
 	height:200px;
 	width:200px;
 	float:left;
+	overflow:hidden;
 	display:inline-block;
+}
+#carousel1{
+	height:100%;
+	display:block;
 }
 #kanji-hold object{
 	display: inline-block;
 	width:100%;
+	position:absolute;
 	height:100%;
 }
 #left-nav{
@@ -293,7 +314,7 @@ html{
 						<input id="undoButton" type="button" value="Undo">
 					</div>
 					<div id="kanji-hold">
-						
+						<div id="carousel1"></div>				
 					</div>
 				</div>
 				<div class="nav" id="right-nav"></div>
@@ -338,6 +359,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		var newCard;
 		var svgName;
 		var svgDoc;
+		var cardCount = 1;
 		var svgPreName = "assets/svg/0";
 		var editButton = document.getElementById("editButton");
 		var submitButton = document.getElementById("submitButton");
@@ -363,6 +385,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
 
 		$('#showGrid').click(function() {
 			$("#canvas-div").toggleClass("grid");
+			$(".animHold").toggleClass("grid");
 		});
 
 		$("#slider").slider({max:10, min:1, step:1, change: function(e, ui) {
@@ -432,15 +455,28 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		function makeNewCard(name, lineWidth){
 			var src = svgPreName+name+".svg"
 			newCard = document.createElement("div");
+			var animHold = document.createElement("div");
+			animHold.setAttribute("class", "animHold");
 			var newSvg = document.createElement("object");
+			$(newSvg).attr("data", src);
+			var newAnim = ($(newSvg).clone())[0];
+			newSvg.setAttribute("id", "card_"+cardCount);
+			newAnim.setAttribute("id", "anim_"+cardCount);
 			newCard.setAttribute("class", "card");
+			$(newAnim).appendTo(animHold);
+			$(animHold).appendTo("#carousel1");
+			$("#carousel1").css("width", cardCount+"00%");
 			newCard.appendChild(newSvg);
 			carousel.insertBefore(newCard, newButton);
-			$(newSvg).attr("data", src);
 			$(carousel).width($(newCard).width() + $(carousel).width());
+			newAnim.addEventListener("load", function(e){
+                                        $(newAnim.contentDocument.getElementById("kvg:StrokeNumbers_0"+name)).hide();
+					$(newAnim.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
+			});
 			newSvg.addEventListener("load", function(e){
 					$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 					});
+			cardCount++;
 
 		}
 		select.addEventListener("click", function(e){
@@ -530,6 +566,8 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				var len = data.charArray.length;
 				var charArr = data.charArray;
 				$(".card").not("#newCard").remove();
+				$(".animHold").remove();
+				cardCount = 1;
 				charArray = data;
 				for(i = 0; i < len; i++){
 					makeNewCard(charArr[i].name, charArr[i].width);
@@ -645,6 +683,8 @@ $(window)[0].onmouseup = function(e) {
 		isDrawing = false;
 		points = [];
 		if(!saved){
+			//TODO
+			//save progress
 			console.log("save");
 			saved = true;
 			//create new canvas
