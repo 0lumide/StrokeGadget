@@ -238,6 +238,15 @@ html{
 	height:100%;
 	display:block;
 }
+#kanji-hold object:first-child{
+	opacity:0;
+}
+#kanji-hold:hover object{
+        opacity:0;
+}
+#kanji-hold:hover object:first-child{
+        opacity:1 !important;
+}
 #kanji-hold object{
 	display: inline-block;
 	width:100%;
@@ -460,9 +469,11 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			var newSvg = document.createElement("object");
 			$(newSvg).attr("data", src);
 			var newAnim = ($(newSvg).clone())[0];
+                        var newAnim1 = $(newAnim).clone()[0];
 			newSvg.setAttribute("id", "card_"+cardCount);
 			newAnim.setAttribute("id", "anim_"+cardCount);
 			newCard.setAttribute("class", "card");
+			$(newAnim1).appendTo(animHold);
 			$(newAnim).appendTo(animHold);
 			$(animHold).appendTo("#carousel1");
 			$("#carousel1").css("width", cardCount+"00%");
@@ -473,6 +484,9 @@ window.addEventListener('HTMLImportsLoaded', function(){
                                         $(newAnim.contentDocument.getElementById("kvg:StrokeNumbers_0"+name)).hide();
 					$(newAnim.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 			});
+                        newAnim1.addEventListener("load", function(e){
+                                	$(newAnim.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
+                        });
 			newSvg.addEventListener("load", function(e){
 					$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 					});
