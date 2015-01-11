@@ -383,59 +383,59 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		var kInput = document.getElementById("kanjiInput");
 		var carousel = document.getElementById('carousel');
 		var newButton = document.getElementById('newCard');
-		
+
 		svgImg.addEventListener('load',function(e){
-			$("#showInput").addClass("visible");
-			//initialize the width and colors maybe
-			svgDoc = svgImg.contentDocument;
-			svgPresent = true;
-			$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", initLineWidth)
-			//var delta = svgDoc.getElementById("delta");
-		});
+				$("#showInput").addClass("visible");
+				//initialize the width and colors maybe
+				svgDoc = svgImg.contentDocument;
+				svgPresent = true;
+				$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", initLineWidth)
+				//var delta = svgDoc.getElementById("delta");
+				});
 
 		$('#showGrid').click(function() {
-			$("#canvas-div").toggleClass("grid");
-			$(".animHold").toggleClass("grid");
-		});
+				$("#canvas-div").toggleClass("grid");
+				$(".animHold").toggleClass("grid");
+				});
 
 		$("#slider").slider({max:10, min:1, step:1, change: function(e, ui) {
-		          player.setAttribute("widthOfStrokes", ui.value);}
-		});
+				player.setAttribute("widthOfStrokes", ui.value);}
+				});
 		var player = new VersalPlayerAPI();
 		player.setPropertySheetAttributes({
-			//widthOfStrokes:  { type: 'Range', min: 1, max: 10, step: 1 }
-		});
-		
-		editButton.addEventListener('click', function(e){
-			$("#all").removeClass("secondView");
-			$("#all").removeClass("homeView");
-			player.setHeight(130);
+				//widthOfStrokes:  { type: 'Range', min: 1, max: 10, step: 1 }
+				});
 
-		});
+		editButton.addEventListener('click', function(e){
+				$("#all").removeClass("secondView");
+				$("#all").removeClass("homeView");
+				player.setHeight(130);
+
+				});
 		newButton.addEventListener('click', function(e){
-			if(canNew){
+				if(canNew){
 				$(kInput).focus();
 				canNew = false;
 				//move container up to show new kanji input
 				$("#all").toggleClass("secondView");//css("top", "-130px");	
-			}
-		});
-	
+				}
+				});
+
 		submitButton.addEventListener("click", function(e){
-			$("#all").removeClass("secondView");
-			$("#all").addClass("homeView");
-			player.setHeight(250);
-		});
+				$("#all").removeClass("secondView");
+				$("#all").addClass("homeView");
+				player.setHeight(250);
+				});
 		cancelButton.addEventListener('click', function(e){
-			$("#all").removeClass("secondView");
-			canNew = true;
-		})
+				$("#all").removeClass("secondView");
+				canNew = true;
+				})
 		function newKanji(){
 			charArray["charArray"].push({
-				"name":svgName,
-				"width":initLineWidth,
-				"showNum":true
-			});
+					"name":svgName,
+					"width":initLineWidth,
+					"showNum":true
+					});
 			player.setAttributes(charArray);
 		}
 		function clearIt(){
@@ -444,33 +444,33 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		}
 		kInput.addEventListener("input", function(e){
 				if(kInput.value.length != 1){
-					clearIt();
-					return;
+				clearIt();
+				return;
 				}
 				var inp = kInput.value;
 				var n = inp.charCodeAt(0);
 				if(isKana(n)||(n >= 19968)&&(n<=40879)||((n>13312)&&(n < 19903))){
 				//Mofaducker go find this kanji
-					if(file_exists("assets/svg/0"+n.toString(16)+".svg")){
-						//$("#showInput").addClass("visible");
-						$(select).removeAttr('disabled');
-						svgName = n.toString(16);
-						$("#svgImg").attr("data", "assets/svg/0"+n.toString(16)+".svg");
-					}
+				if(file_exists("assets/svg/0"+n.toString(16)+".svg")){
+				//$("#showInput").addClass("visible");
+				$(select).removeAttr('disabled');
+				svgName = n.toString(16);
+				$("#svgImg").attr("data", "assets/svg/0"+n.toString(16)+".svg");
+				}
 				}
 				else
-					clearIt();
+				clearIt();
 
 				})
 		function makeNewCard(name, lineWidth){
 			var src = svgPreName+name+".svg"
-			newCard = document.createElement("div");
+				newCard = document.createElement("div");
 			var animHold = document.createElement("div");
 			animHold.setAttribute("class", "animHold");
 			var newSvg = document.createElement("object");
 			$(newSvg).attr("data", src);
 			var newAnim = ($(newSvg).clone())[0];
-                        var newAnim1 = $(newAnim).clone()[0];
+			var newAnim1 = $(newAnim).clone()[0];
 			newSvg.setAttribute("id", "card_"+cardCount);
 			newAnim.setAttribute("id", "anim_"+cardCount);
 			newCard.setAttribute("class", "card");
@@ -482,12 +482,12 @@ window.addEventListener('HTMLImportsLoaded', function(){
 			carousel.insertBefore(newCard, newButton);
 			$(carousel).width($(newCard).width() + $(carousel).width());
 			newAnim.addEventListener("load", function(e){
-                                        $(newAnim.contentDocument.getElementById("kvg:StrokeNumbers_0"+name)).hide();
+					$(newAnim.contentDocument.getElementById("kvg:StrokeNumbers_0"+name)).hide();
 					$(newAnim.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
-			});
-                        newAnim1.addEventListener("load", function(e){
-                                	$(newAnim.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
-                        });
+					});
+			newAnim1.addEventListener("load", function(e){
+					$(newAnim.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
+					});
 			newSvg.addEventListener("load", function(e){
 					$(newSvg.contentDocument.getElementById("kvg:StrokePaths_0"+name)).css("stroke-width", lineWidth);
 					});
@@ -495,17 +495,17 @@ window.addEventListener('HTMLImportsLoaded', function(){
 
 		}
 		select.addEventListener("click", function(e){
-			reinitialise();
-			newKanji();
-			canNew = true;
-			$("#all").removeClass("secondView");
-			$(kInput).val("");
-			clearIt();
-		});
+				reinitialise();
+				newKanji();
+				canNew = true;
+				$("#all").removeClass("secondView");
+				$(kInput).val("");
+				clearIt();
+				});
 
 		$(window).resize(function(){
-			reinitialise();
-		});
+				reinitialise();
+				});
 		function isKana(n){
 			//outside kana range
 			if((n <= 12353) || (n >= 12539)){
@@ -561,22 +561,22 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		}
 		$('.jspDrag').hide();
 		$('.jspScrollable').mouseenter(function(){
-			$(this).find('.jspDrag').stop(true, true).fadeIn('slow');
-		});
+				$(this).find('.jspDrag').stop(true, true).fadeIn('slow');
+				});
 		$('.jspScrollable').mouseleave(function(){
-			$(this).find('.jspDrag').stop(true, true).fadeOut('slow');
-		});
+				$(this).find('.jspDrag').stop(true, true).fadeOut('slow');
+				});
 		player.setHeight(250);
 		player.startListening();
 
 		player.on('attributesChanged', function(data){
-			if(data.widthOfStrokes) {
+				if(data.widthOfStrokes) {
 				initLineWidth = data.widthOfStrokes
 				if(svgPresent){
-					$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", data.widthOfStrokes);
+				$(svgDoc.getElementById("kvg:StrokePaths_0"+svgName)).css("stroke-width", data.widthOfStrokes);
 				}
-			}
-			if(data.charArray){
+				}
+				if(data.charArray){
 				//$("#instruction").hide();
 				var len = data.charArray.length;
 				var charArr = data.charArray;
@@ -585,66 +585,66 @@ window.addEventListener('HTMLImportsLoaded', function(){
 				cardCount = 1;
 				charArray = data;
 				for(i = 0; i < len; i++){
-					makeNewCard(charArr[i].name, charArr[i].width);
+				makeNewCard(charArr[i].name, charArr[i].width);
 				}
-			}
-			else if(data.strokeNumber){
+				}
+				else if(data.strokeNumber){
 				if(data.strokeNumber == 1)
 					$("#showNum").prop("checked", true);
 				else
 					$("#showNum").prop("checked", false);
-			};
+				};
 		});
 
 		player.on('learnerStateChanged', function(data){
-			if(data.points) {
+				if(data.points) {
 				if(!started){
-					started = true;
-					//Draw the lines
+				started = true;
+				//Draw the lines
 				}
-			};
-		});
+				};
+				});
 
 		player.on('editableChanged', function(editable){
-			if(editable.editable){
+				if(editable.editable){
 				$("#slider").slider("value", initLineWidth);
 				$("#instruction").finish();
 				$("#instruction").fadeOut(800);
 				$("#all").removeClass("secondView");
-                        	$("#all").removeClass("homeView");
-                        	player.setHeight(130);
+				$("#all").removeClass("homeView");
+				player.setHeight(130);
 				$(editButton).show();
-			}
-			else{
+				}
+				else{
 				canNew = true;
 				//Not sure if I want this behaviour
 				if(!charArray["charArray"].length){
-					$("#instruction").finish();
-					$("#instruction").fadeIn(5000);
+				$("#instruction").finish();
+				$("#instruction").fadeIn(5000);
 				}
 				$("#all").removeClass("secondView");
-                        	$("#all").addClass("homeView");
-                        	player.setHeight(250);
+				$("#all").addClass("homeView");
+				player.setHeight(250);
 				$(editButton).hide();
-			}
+				}
 		});
 
-});
-//Canvas drawing script starts here
-function midPointBtw(p1, p2) {
-	return {
+
+		//Canvas drawing script starts here
+		function midPointBtw(p1, p2) {
+			return {
 x: p1.x + (p2.x - p1.x) / 2,
 	   y: p1.y + (p2.y - p1.y) / 2
-	};
-}
-var strokeCount = 2;
-var el = document.getElementById('receipient');
-var eld = document.getElementById('stroke1');
-var ctx = eld.getContext('2d');
-var api = $('#window').jScrollPane({
-	horizontalGutter:5,
-	verticalGutter:5,
-	'showArrows': false
+			};
+		}
+		var strokeCount = 2;
+		var el = document.getElementById('receipient');
+		var eld = document.getElementById('stroke1');
+		var ctx = eld.getContext('2d');
+		var api = $('#window').jScrollPane({
+horizontalGutter:5,
+verticalGutter:5,
+'showArrows': false
 }).data('jsp');
 ctx.lineWidth = 6;
 ctx.lineJoin = ctx.lineCap = 'round';
@@ -720,5 +720,6 @@ $(window)[0].onmouseup = function(e) {
 		}
 	}
 };
+});
 </script>
 </html>
