@@ -366,6 +366,7 @@ html{
 window.addEventListener('HTMLImportsLoaded', function(){
 		var canNew = true;
 		var newCard;
+		var started = false;
 		var svgName;
 		var svgDoc;
 		var cardCount = 1;
@@ -596,8 +597,11 @@ window.addEventListener('HTMLImportsLoaded', function(){
 		});
 
 		player.on('learnerStateChanged', function(data){
-			if(data.learnerName) {
-				learnerName.value = data.learnerName;
+			if(data.points) {
+				if(!started){
+					started = true;
+					//Draw the lines
+				}
 			};
 		});
 
@@ -700,6 +704,7 @@ $(window)[0].onmouseup = function(e) {
 			//TODO
 			//save progress
 			console.log("save");
+			//Animate next stroke
 			saved = true;
 			//create new canvas
 			newCanv = document.createElement("canvas");  
